@@ -8,12 +8,12 @@ const departmentRoutes = require('./routes/departmentRoutes');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Optional: add your deployed frontend URL here
+// ✅ Correct GitHub Pages origin (no repo path)
 const allowedOrigins = [
   'http://localhost:3000',
   'http://localhost:5173',
   'http://localhost:4173',
-  'https://jigarpandhare25.github.io', // <-- replace with your actual frontend URL
+  'https://jigarpandhare25.github.io',
   'https://weintern-week-2-task-2-backend.onrender.com'
 ];
 
@@ -54,7 +54,6 @@ app.get('/api/health', (req, res) => {
 app.use((err, req, res, next) => {
   console.error('Server error:', err);
 
-  // Mongoose validation error
   if (err.name === 'ValidationError') {
     const messages = Object.values(err.errors).map((val) => val.message);
     return res.status(400).json({
@@ -63,7 +62,6 @@ app.use((err, req, res, next) => {
     });
   }
 
-  // Mongoose bad ObjectId
   if (err.name === 'CastError') {
     return res.status(404).json({
       success: false,
