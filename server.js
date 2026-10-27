@@ -1,7 +1,6 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const path = require('path');
 const { connectDB } = require('./config/db');
 const employeeRoutes = require('./routes/employeeRoutes');
 const departmentRoutes = require('./routes/departmentRoutes');
@@ -9,18 +8,34 @@ const departmentRoutes = require('./routes/departmentRoutes');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Optional: add your deployed frontend URL here
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:5173',
+  'http://localhost:4173',
+  'https://jigarpandhare25.github.io/Weintern_Week-2_Task-2_Frontend/', // <-- replace with your actual frontend URL
+  'https://weintern-week-2-task-2-backend.onrender.com'
+];
+
 // Connect to Database
 connectDB();
 
 // Middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true
+  })
+);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// Serve frontend static assets (points to frontend folder, fallback to public)
-const frontendPath = path.join(__dirname, '..', 'frontend');
-app.use(express.static(frontendPath));
-app.use(express.static(path.join(__dirname, 'public')));
 
 // API Routes
 app.use('/api/employees', employeeRoutes);
@@ -59,16 +74,6 @@ app.use((err, req, res, next) => {
   res.status(err.statusCode || 500).json({
     success: false,
     error: err.message || 'Internal Server Error'
-  });
-});
-
-// Fallback handler for single-page routing
-app.use((req, res) => {
-  const frontendIndex = path.join(frontendPath, 'index.html');
-  res.sendFile(frontendIndex, (err) => {
-    if (err) {
-      res.sendFile(path.join(__dirname, 'public', 'index.html'));
-    }
   });
 });
 
