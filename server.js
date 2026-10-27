@@ -13,7 +13,7 @@ const allowedOrigins = [
   'http://localhost:3000',
   'http://localhost:5173',
   'http://localhost:4173',
-  'https://jigarpandhare25.github.io/Weintern_Week-2_Task-2_Frontend/', // <-- replace with your actual frontend URL
+  'https://jigarpandhare25.github.io', // <-- replace with your actual frontend URL
   'https://weintern-week-2-task-2-backend.onrender.com'
 ];
 
